@@ -2,23 +2,18 @@ package(default_visibility = ["//visibility:public"])
 
 load("@npm_angular_bazel//:index.bzl", "ng_module")
 load("@npm_bazel_karma//:index.bzl", "ts_web_test_suite")
-load("@build_bazel_rules_nodejs//:defs.bzl", "rollup_bundle", "history_server")
+load("@build_bazel_rules_nodejs//:defs.bzl", "history_server", "rollup_bundle")
 load("@build_bazel_rules_nodejs//internal/web_package:web_package.bzl", "web_package")
 load("@npm_bazel_typescript//:index.bzl", "ts_devserver", "ts_library")
-load("@io_bazel_rules_sass//:defs.bzl", "multi_sass_binary", "sass_binary")
+load("@io_bazel_rules_sass//:defs.bzl", "sass_binary")
 
 sass_binary(
-  name = "global_stylesheet",
-  src = glob(["styles.css", "styles.scss"])[0],
-  output_name = "global_stylesheet.css",
-)
-
-multi_sass_binary(
-    name = "styles",
-    srcs = glob(
-      include = ["**/*.scss"],
-      exclude = ["styles.scss"],
-    ),
+    name = "global_stylesheet",
+    src = glob([
+        "styles.css",
+        "styles.scss",
+    ])[0],
+    output_name = "global_stylesheet.css",
 )
 
 ng_module(
@@ -33,10 +28,11 @@ ng_module(
         ],
     ),
     assets = glob([
-      "**/*.css",
-      "**/*.html",
-    ]) + ([":styles"] if len(glob(["**/*.scss"])) else []),
+        "**/*.css",
+        "**/*.html",
+    ]),
     deps = [
+        "//src/app",
         "@npm//@angular/core",
         "@npm//@angular/platform-browser",
         "@npm//@angular/router",
@@ -86,21 +82,21 @@ filegroup(
 
 ts_devserver(
     name = "devserver",
-    port = 4200,
+    data = [
+        "favicon.ico",
+    ],
     entry_module = "project/src/main.dev",
-    serving_path = "/bundle.min.js",
+    index_html = "index.html",
+    port = 4200,
     scripts = [
         "@npm//:node_modules/tslib/tslib.js",
         ":rxjs_umd_modules",
     ],
+    serving_path = "/bundle.min.js",
     static_files = [
         "@npm//:node_modules/zone.js/dist/zone.min.js",
         ":global_stylesheet",
     ],
-    data = [
-        "favicon.ico",
-    ],
-    index_html = "index.html",
     deps = [":src"],
 )
 
@@ -134,9 +130,6 @@ ts_web_test_suite(
     srcs = [
         "@npm//:node_modules/tslib/tslib.js",
     ],
-    runtime_deps = [
-        ":initialize_testbed",
-    ],
     # do not sort
     bootstrap = [
         "@npm//:node_modules/zone.js/dist/zone-testing-bundle.js",
@@ -145,9 +138,13 @@ ts_web_test_suite(
     browsers = [
         "@io_bazel_rules_webtesting//browsers:chromium-local",
     ],
+    runtime_deps = [
+        ":initialize_testbed",
+    ],
     deps = [
         ":rxjs_umd_modules",
         ":test_lib",
+        "//src/app:test_lib",
         "@npm//karma-jasmine",
     ],
 )
