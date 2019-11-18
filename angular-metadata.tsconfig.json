@@ -3,18 +3,13 @@
 // with AOT compilation, NGC needs the "ngsummary.json" files.
 {
   "compilerOptions": {
-    "lib": [
-      "dom",
-      "es2015"
-    ],
+    "lib": ["dom", "es2015"],
     "experimentalDecorators": true,
     "types": [],
     "module": "amd",
     "moduleResolution": "node"
   },
-  "include": [
-    "node_modules/@angular/**/*"
-  ],
+  "include": ["node_modules/@angular/**/*"],
   "exclude": [
     "node_modules/@angular/cli/**",
     "node_modules/@angular/bazel/**",

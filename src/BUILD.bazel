@@ -1,11 +1,11 @@
-package(default_visibility = ["//visibility:public"])
-
 load("@npm_angular_bazel//:index.bzl", "ng_module")
 load("@npm_bazel_karma//:index.bzl", "ts_web_test_suite")
 load("@build_bazel_rules_nodejs//:defs.bzl", "history_server", "rollup_bundle")
 load("@build_bazel_rules_nodejs//internal/web_package:web_package.bzl", "web_package")
 load("@npm_bazel_typescript//:index.bzl", "ts_devserver", "ts_library")
 load("@io_bazel_rules_sass//:defs.bzl", "sass_binary")
+
+package(default_visibility = ["//visibility:public"])
 
 sass_binary(
     name = "global_stylesheet",
@@ -33,6 +33,7 @@ ng_module(
     ]),
     deps = [
         "//src/app",
+        "@npm//@angular/common",
         "@npm//@angular/core",
         "@npm//@angular/platform-browser",
         "@npm//@angular/router",
@@ -43,11 +44,12 @@ ng_module(
 
 rollup_bundle(
     name = "bundle",
+    additional_entry_points = [
+        "//src/app/home",
+    ],
     entry_point = ":main.prod.ts",
     deps = [
         "//src",
-        "@npm//@angular/router",
-        "@npm//rxjs",
     ],
 )
 
