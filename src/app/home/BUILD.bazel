@@ -1,6 +1,5 @@
 load("@io_bazel_rules_sass//:defs.bzl", "sass_binary")
 load("@npm_angular_bazel//:index.bzl", "ng_module")
-load("@npm_bazel_typescript//:index.bzl", "ts_library")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -11,31 +10,16 @@ sass_binary(
 
 ng_module(
     name = "home",
-    srcs = glob(
-        include = ["*.ts"],
-        exclude = ["*.spec.ts"],
-    ),
+    srcs = [
+        "home.component.ts",
+        "home.module.ts",
+    ],
     assets = [
         "home.component.html",
         ":home-styles",
     ],
     deps = [
         "@npm//@angular/common",
-        "@npm//@angular/core",
-        "@npm//@angular/platform-browser",
         "@npm//@angular/router",
-        "@npm//@types",
-        "@npm//rxjs",
-    ],
-)
-
-ts_library(
-    name = "test_lib",
-    testonly = 1,
-    srcs = ["home.component.spec.ts"],
-    deps = [
-        ":home",
-        "@npm//@angular/core",
-        "@npm//@types",
     ],
 )
